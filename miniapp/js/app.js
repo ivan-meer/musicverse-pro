@@ -159,6 +159,9 @@ function toggleFavorite(trackId) {
         appState.favorites.push(trackId);
         tg.showAlert('Added to favorites');
     }
+    
+    // Update main button visibility
+    updateMainButton();
 }
 
 // Setup event listeners
@@ -244,8 +247,11 @@ function createPlaylist() {
 function setupMainButton() {
     tg.MainButton.setText('Share Favorites');
     tg.MainButton.onClick(sendDataToBot);
-    
-    // Show button only when there are favorites
+    updateMainButton();
+}
+
+// Update main button visibility based on favorites
+function updateMainButton() {
     if (appState.favorites.length > 0) {
         tg.MainButton.show();
     } else {

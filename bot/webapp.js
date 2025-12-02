@@ -1,4 +1,5 @@
 const cors = require('cors');
+const { verifyTelegramWebAppData, extractUserData, checkInitDataExpiry } = require('./utils/auth');
 
 /**
  * Setup Web App routes and middleware
@@ -14,19 +15,55 @@ function setupWebApp(app) {
   app.post('/api/auth/verify', (req, res) => {
     const { initData } = req.body;
     
-    // TODO: Implement Telegram Web App data verification
-    // https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app
-    
+    if (!initData) {
+      return res.status(400).json({
+        success: false,
+        message: 'Init data is required'
+      });
+    }
+
     try {
-      // Placeholder verification
+      // Verify the init data signature
+      const isValid = verifyTelegramWebAppData(initData, process.env.TELEGRAM_BOT_TOKEN);
+      
+      if (!isValid) {
+        return res.status(401).json({
+          success: false,
+          message: 'Invalid init data signature'
+        });
+      }
+
+      // Check if data is not expired
+      const isNotExpired = checkInitDataExpiry(initData);
+      
+      if (!isNotExpired) {
+        return res.status(401).json({
+          success: false,
+          message: 'Init data has expired'
+        });
+      }
+
+      // Extract user data
+      const userData = extractUserData(initData);
+      
+      if (!userData) {
+        return res.status(401).json({
+          success: false,
+          message: 'Could not extract user data'
+        });
+      }
+
+      // Authentication successful
       res.json({
         success: true,
-        message: 'Authentication successful'
+        message: 'Authentication successful',
+        user: userData
       });
     } catch (error) {
-      res.status(401).json({
+      console.error('Authentication error:', error);
+      res.status(500).json({
         success: false,
-        message: 'Authentication failed'
+        message: 'Internal server error'
       });
     }
   });
