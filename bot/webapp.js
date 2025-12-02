@@ -1,5 +1,6 @@
 const cors = require('cors');
 const { verifyTelegramWebAppData, extractUserData, checkInitDataExpiry } = require('./utils/auth');
+const { authLimiter, apiLimiter } = require('./middleware/rateLimiter');
 
 /**
  * Setup Web App routes and middleware
@@ -11,8 +12,11 @@ function setupWebApp(app) {
     credentials: true
   }));
 
-  // API endpoint to verify Telegram Web App data
-  app.post('/api/auth/verify', (req, res) => {
+  // Apply rate limiting to API routes
+  app.use('/api/', apiLimiter);
+
+  // API endpoint to verify Telegram Web App data (with stricter rate limiting)
+  app.post('/api/auth/verify', authLimiter, (req, res) => {
     const { initData } = req.body;
     
     if (!initData) {
