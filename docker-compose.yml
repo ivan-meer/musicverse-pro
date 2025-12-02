@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: musicverse-pro
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://musicverse:password@postgres:5432/musicverse
+      - REDIS_URL=redis://redis:6379
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    networks:
+      - musicverse-network
+    volumes:
+      - ./logs:/app/logs
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: musicverse-postgres
+    environment:
+      - POSTGRES_DB=musicverse
+      - POSTGRES_USER=musicverse
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - musicverse-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: musicverse-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - musicverse-network
+
+networks:
+  musicverse-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
