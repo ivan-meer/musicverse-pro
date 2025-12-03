@@ -1,465 +1,272 @@
-<div align="center">
-
 # 🎵 MusicVerse Pro
 
-### Ваш персональный музыкальный компаньон в Telegram
+> Профессиональная музыкальная платформа в Telegram с ботом и Mini App
 
-[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
-[![Node.js](https://img.shields.io/badge/Node.js-16+-green.svg)](https://nodejs.org/)
-[![Telegram Bot](https://img.shields.io/badge/Telegram-Bot-blue.svg)](https://core.telegram.org/bots)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](docs/CONTRIBUTING_RU.md)
-[![Status](https://img.shields.io/badge/status-production%20ready-success)](docs/PROJECT_SUMMARY_RU.md)
-[![Docker](https://img.shields.io/badge/Docker-ready-blue.svg)](docker-compose.yml)
-[![Documentation](https://img.shields.io/badge/docs-Russian%20%7C%20English-informational)](docs/)
-
-[Возможности](#-возможности) • [Быстрый старт](#-быстрый-старт) • [Документация](#-документация) • [Развертывание](#-развертывание) • [Участие](#-участие-в-разработке)
-
----
-
-**[🇷🇺 Русский](README.md)** | **[🇬🇧 English](docs/README_EN.md)**
-
-</div>
-
----
-
-## 📖 О проекте
-
-MusicVerse Pro — это полнофункциональное Telegram Mini App с интеграцией бота для поиска музыки, управления плейлистами и персонализированных рекомендаций. Проект предоставляет надежную основу для создания музыкальной платформы, интегрированной с экосистемой Telegram.
-
-### 🎯 Основные преимущества
-
-- ⚡ **Быстрый старт** - Готовая структура проекта, запуск за 5 минут
-- 🔒 **Безопасность** - Встроенная верификация Telegram Web App
-- 📦 **Модульность** - Легко расширяемая архитектура
-- 🐳 **Docker Ready** - Готовые конфигурации для контейнеризации
-- 📚 **Документация** - Полная документация на русском и английском
-- 🎨 **Адаптивный дизайн** - Работает на всех устройствах
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org)
+[![Docker](https://img.shields.io/badge/docker-%3E%3D24.0.0-blue.svg)](https://www.docker.com)
 
 ## ✨ Возможности
 
-<table>
-<tr>
-<td width="50%">
+- 🤖 **Telegram Bot** - Интерактивный бот с многоуровневым меню
+- 📱 **Mini App** - Полнофункциональное веб-приложение в Telegram
+- 🔍 **Полнотекстовый поиск** - Быстрый поиск музыки по названию, исполнителю, жанру
+- 🎯 **Персонализированные рекомендации** - ML-based рекомендации на основе истории
+- 📊 **Аналитика** - Comprehensive analytics для data-driven решений
+- 🔔 **Уведомления** - Система push-уведомлений через Telegram
+- ⚡ **Высокая производительность** - Response time < 200ms через 3-level кэширование
+- 🛡️ **Безопасность** - Row Level Security, HMAC authentication, rate limiting
+- 📈 **Масштабируемость** - Поддержка 1000+ concurrent users
 
-### 🤖 Telegram Bot
-- Интерактивные команды
-- Inline-клавиатуры
-- Обработка callback-запросов
-- Интеграция с Mini App
-- Обработка ошибок и логирование
+## 🏗️ Архитектура
 
-</td>
-<td width="50%">
-
-### 📱 Mini App
-- Адаптивный дизайн
-- Навигация по вкладкам
-- Поиск и рекомендации
-- Управление плейлистами
-- Система избранного
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 🔐 Безопасность
-- Верификация данных Telegram
-- HTTPS обязателен
-- Ограничение запросов
-- Валидация входных данных
-- CORS конфигурация
-
-</td>
-<td width="50%">
-
-### 🔌 Интеграции
-- Spotify API
-- Deezer API
-- Apple Music API
-- Last.fm API
-- Расширяемая архитектура
-
-</td>
-</tr>
-</table>
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      Telegram Users                          │
+└──────────────────┬──────────────────────────────────────────┘
+                   │
+        ┌──────────┴──────────┐
+        │                     │
+┌───────▼────────┐   ┌────────▼────────┐
+│  Telegram Bot  │   │   Mini App      │
+└───────┬────────┘   └────────┬────────┘
+        │                     │
+        └──────────┬──────────┘
+                   │
+        ┌──────────▼──────────┐
+        │   Express Server    │
+        │  (API Gateway)      │
+        └──────────┬──────────┘
+                   │
+     ┌─────────────┼─────────────┐
+     │             │             │
+┌────▼────┐  ┌────▼────┐  ┌────▼────┐
+│  Redis  │  │Supabase │  │  Bull   │
+│  Cache  │  │   DB    │  │ Queue   │
+└─────────┘  └─────────┘  └────┬────┘
+                                │
+                         ┌──────▼──────┐
+                         │   Workers   │
+                         │ (Background)│
+                         └─────────────┘
+```
 
 ## 🚀 Быстрый старт
 
 ### Предварительные требования
 
-```bash
-Node.js 16+ или Python 3.8+
-Telegram Bot Token (от @BotFather)
-Домен с HTTPS (для Mini App)
-```
+- Node.js 18+
+- Docker & Docker Compose
+- Telegram аккаунт
+- Supabase аккаунт (бесплатный)
 
 ### Установка
 
 ```bash
-# 1. Клонируйте репозиторий
-git clone https://github.com/ivan-meer/musicverse-pro.git
+# Клонировать репозиторий
+git clone https://github.com/your-org/musicverse-pro.git
 cd musicverse-pro
 
-# 2. Установите зависимости
+# Установить зависимости
 npm install
 
-# 3. Настройте переменные окружения
+# Настроить окружение
 cp .env.example .env
-# Отредактируйте .env своими данными
+# Отредактируйте .env файл
 
-# 4. Запустите приложение
-npm start
+# Запустить через Docker
+docker-compose up -d
 
-# Для разработки с автоперезагрузкой:
+# Или запустить локально
 npm run dev
 ```
 
-### Настройка Telegram Bot
+### Настройка
 
-1. Откройте [@BotFather](https://t.me/BotFather) в Telegram
-2. Создайте нового бота командой `/newbot`
-3. Сохраните токен в `.env`
-4. Настройте команды бота:
+1. **Создайте Supabase проект** на https://supabase.com
+2. **Примените миграции** из `supabase/migrations/`
+3. **Создайте Telegram бота** через @BotFather
+4. **Заполните .env** файл с вашими credentials
 
-```
-start - Запустить бота
-help - Показать справку
-music - Получить рекомендации
-search - Поиск музыки
-playlists - Ваши плейлисты
-favorites - Избранные треки
-settings - Настройки
-```
+Подробная инструкция: [Quick Start Guide](.kiro/specs/musicverse-pro-complete/QUICK_START.md)
 
-### ⚙️ Переменные окружения
+## 📖 Документация
 
-```env
-# Обязательные
-TELEGRAM_BOT_TOKEN=your_bot_token_here
-TELEGRAM_BOT_USERNAME=your_bot_username
-MINI_APP_URL=https://your-domain.com
+### Начало работы
+- 🚀 [START HERE](.kiro/specs/START_HERE.md) - **Начните отсюда!**
+- 📋 [Phased Development Plan](.kiro/specs/PHASED_DEVELOPMENT_PLAN.md) - Поэтапный план
+- 📊 [Overview](.kiro/specs/OVERVIEW.md) - Обзор спецификаций
 
-# Опциональные
-MUSIC_API_KEY=your_api_key
-MUSIC_API_SECRET=your_api_secret
-DATABASE_URL=postgresql://user:pass@localhost:5432/db
-REDIS_URL=redis://localhost:6379
-PORT=3000
-NODE_ENV=production
-```
+### MVP Спецификация (4 недели)
+- 📋 [Requirements](.kiro/specs/mvp/requirements.md) - 8 требований
+- 🏗️ [Design](.kiro/specs/mvp/design.md) - Простая архитектура
+- 📝 [Tasks](.kiro/specs/mvp/tasks.md) - Детальные задачи
 
-## 📁 Структура проекта
-
-```
-musicverse-pro/
-├── 🤖 bot/                    # Backend Telegram бота
-│   ├── index.js              # Точка входа
-│   ├── handlers.js           # Обработчики команд
-│   ├── webapp.js             # Маршруты веб-приложения
-│   ├── middleware/           # Middleware (rate limiting)
-│   ├── services/             # Бизнес-логика
-│   └── utils/                # Утилиты (аутентификация)
-│
-├── 📱 miniapp/                # Frontend Mini App
-│   ├── index.html            # Главный UI
-│   ├── css/                  # Стили
-│   └── js/                   # JavaScript
-│
-├── 📚 docs/                   # Документация
-│   ├── API_SPECIFICATION.md
-│   ├── BOT_SPECIFICATION.md
-│   ├── ARCHITECTURE.md
-│   ├── DEPLOYMENT.md
-│   ├── GETTING_STARTED.md
-│   ├── CONTRIBUTING.md
-│   └── FAQ.md
-│
-├── 🐳 Docker                  # Контейнеризация
-│   ├── Dockerfile
-│   └── docker-compose.yml
-│
-└── ⚙️ Конфигурация
-    ├── package.json
-    ├── .env.example
-    ├── .eslintrc.json
-    └── .prettierrc
-```
-
-## 📚 Документация
-
-### 🇷🇺 Русская документация
-
-| Документ | Описание |
-|----------|----------|
-| [🚀 Начало работы](docs/GETTING_STARTED_RU.md) | Пошаговое руководство по настройке |
-| [📡 API спецификация](docs/API_SPECIFICATION_RU.md) | Полная документация REST API |
-| [🤖 Спецификация бота](docs/BOT_SPECIFICATION_RU.md) | Команды и функции бота |
-| [🏗️ Архитектура](docs/ARCHITECTURE_RU.md) | Дизайн системы и паттерны |
-| [🚢 Развертывание](docs/DEPLOYMENT_RU.md) | Инструкции по развертыванию |
-| [📋 Обзор проекта](docs/PROJECT_SUMMARY_RU.md) | Полный обзор проекта |
-| [❓ FAQ](docs/FAQ_RU.md) | Часто задаваемые вопросы |
-| [🤝 Участие](docs/CONTRIBUTING_RU.md) | Руководство для контрибьюторов |
-| [🔒 Безопасность](SECURITY_RU.md) | Политика безопасности |
-| [📝 История изменений](CHANGELOG_RU.md) | Журнал изменений |
-
-### 🇬🇧 English Documentation
-
-| Document | Description |
-|----------|-------------|
-| [🚀 Getting Started](docs/GETTING_STARTED.md) | Step-by-step setup guide |
-| [📡 API Specification](docs/API_SPECIFICATION.md) | Complete REST API documentation |
-| [🤖 Bot Specification](docs/BOT_SPECIFICATION.md) | Bot commands and features |
-| [🏗️ Architecture](docs/ARCHITECTURE.md) | System design and patterns |
-| [🚢 Deployment](docs/DEPLOYMENT.md) | Deployment instructions |
-| [📋 Project Summary](docs/PROJECT_SUMMARY.md) | Complete project overview |
-| [❓ FAQ](docs/FAQ.md) | Frequently asked questions |
-| [🤝 Contributing](docs/CONTRIBUTING.md) | Contribution guidelines |
-| [🔒 Security](SECURITY.md) | Security policy |
-| [📝 Changelog](CHANGELOG.md) | Version history |
+### Дополнительная документация
+- 📚 [API Specification](docs/API_SPECIFICATION_RU.md) - API документация
+- 🐳 [Deployment](docs/DEPLOYMENT_RU.md) - Развертывание
+- 🏛️ [Architecture](docs/ARCHITECTURE_RU.md) - Архитектура
 
 ## 🛠️ Технологический стек
 
-<table>
-<tr>
-<td>
+**Backend:**
+- Node.js 18+ + Express.js
+- Supabase (PostgreSQL 15+)
+- Redis 7+
+- Bull/BullMQ
 
-### Backend
-- Node.js / Express.js
-- Telegram Bot API
-- PostgreSQL
-- Redis
-
-</td>
-<td>
-
-### Frontend
-- HTML5 / CSS3
+**Frontend:**
 - Vanilla JavaScript
 - Telegram Web App SDK
+- HTML5/CSS3
 
-</td>
-<td>
+**DevOps:**
+- Docker + Docker Compose
+- Nginx
+- Prometheus + Grafana
+- GitHub Actions
 
-### DevOps
-- Docker
-- Docker Compose
-- PM2
-- NGINX
+**Testing:**
+- Jest (unit tests)
+- fast-check (property-based tests)
+- k6 (load tests)
 
-</td>
-</tr>
-</table>
+## 📊 Производительность
 
-## 🔌 API Endpoints
-
-```javascript
-POST   /api/auth/verify              // Верификация данных Telegram
-GET    /api/user/:userId             // Получить данные пользователя
-GET    /api/recommendations/:userId  // Получить рекомендации
-GET    /api/playlists/:userId        // Получить плейлисты
-POST   /api/playlists                // Создать плейлист
-GET    /api/favorites/:userId        // Получить избранное
-POST   /api/favorites/:userId        // Добавить в избранное
-GET    /health                       // Проверка здоровья
-```
-
-Полная документация: [API Specification](docs/API_SPECIFICATION.md)
-
-## 🤖 Команды бота
-
-| Команда | Описание | Пример |
-|---------|----------|--------|
-| `/start` | Запустить бота и показать меню | `/start` |
-| `/help` | Показать справочную информацию | `/help` |
-| `/music` | Получить персональные рекомендации | `/music` |
-| `/search [запрос]` | Поиск музыки | `/search электронная музыка` |
-| `/playlists` | Просмотр плейлистов | `/playlists` |
-| `/favorites` | Просмотр избранного | `/favorites` |
-| `/settings` | Настройки бота | `/settings` |
-
-### Примеры использования
-
-```bash
-# Поиск музыки
-/search Daft Punk
-
-# Получение рекомендаций
-/music
-
-# Просмотр избранного
-/favorites
-```
-
-## 🚢 Развертывание
-
-### Docker (рекомендуется)
-
-```bash
-# Запуск с Docker Compose
-docker-compose up -d
-
-# Просмотр логов
-docker-compose logs -f
-
-# Остановка
-docker-compose down
-```
-
-### Традиционный сервер
-
-```bash
-# Установка PM2
-npm install -g pm2
-
-# Запуск приложения
-pm2 start bot/index.js --name musicverse-pro
-
-# Сохранение конфигурации
-pm2 save
-pm2 startup
-```
-
-### Облачные платформы
-
-- **Heroku**: `git push heroku main`
-- **Railway**: Подключите GitHub репозиторий
-- **Vercel**: `vercel --prod`
-- **AWS/DigitalOcean**: См. [руководство по развертыванию](docs/DEPLOYMENT.md)
+- ⚡ Response time: < 200ms (p95)
+- 🎯 Cache hit rate: > 80%
+- 📈 Throughput: 100+ req/s
+- 🔄 Uptime: 99.9%
+- 👥 Concurrent users: 1000+
 
 ## 🔒 Безопасность
 
-- ✅ Верификация данных Telegram Web App (HMAC-SHA256)
-- ✅ Проверка срока действия init data (TTL 1 час)
-- ✅ Ограничение запросов (rate limiting)
-- ✅ CORS конфигурация для доменов Telegram
-- ✅ Валидация и санитизация входных данных
-- ✅ HTTPS обязателен для Mini App
-- ✅ Переменные окружения для секретов
+- ✅ Telegram Web App HMAC authentication
+- ✅ Row Level Security (RLS) в Supabase
+- ✅ Rate limiting на всех endpoints
+- ✅ Input validation и sanitization
+- ✅ Encryption at rest
+- ✅ HTTPS only для Mini App
 
-Подробнее: [SECURITY.md](SECURITY.md)
-
-## 🧪 Разработка
+## 🧪 Тестирование
 
 ```bash
-# Запуск в режиме разработки
-npm run dev
-
-# Запуск тестов
+# Запустить все тесты
 npm test
 
-# Проверка кода (linting)
-npm run lint
+# Unit tests
+npm run test:unit
 
-# Форматирование кода
-npm run format
+# Integration tests
+npm run test:integration
+
+# Property-based tests
+npm run test:property
+
+# Load tests
+npm run test:load
+
+# Coverage
+npm run test:coverage
 ```
 
-## 🗺️ Дорожная карта
+## 📈 Мониторинг
 
-- [ ] WebSocket для обновлений в реальном времени
-- [ ] Push-уведомления
-- [ ] Социальные функции (шаринг плейлистов)
-- [ ] AI-рекомендации на основе ML
-- [ ] Аудио-стриминг
-- [ ] Офлайн-режим
-- [ ] Мультиязычность (i18n)
-- [ ] Панель аналитики
+- **Prometheus** - Сбор метрик
+- **Grafana** - Визуализация
+- **Winston** - Structured logging
+- **Sentry** - Error tracking (optional)
 
-## 🤝 Участие в разработке
+Доступ к метрикам: `http://localhost:3000/metrics`
 
-Мы приветствуем вклад в проект! Пожалуйста, ознакомьтесь с [руководством для контрибьюторов](docs/CONTRIBUTING.md).
+## 🚢 Развертывание
+
+### Development
 
 ```bash
-# 1. Форкните репозиторий
-# 2. Создайте ветку для фичи
-git checkout -b feature/amazing-feature
-
-# 3. Закоммитьте изменения
-git commit -m "Add: amazing feature"
-
-# 4. Запушьте в ветку
-git push origin feature/amazing-feature
-
-# 5. Откройте Pull Request
+npm run dev
 ```
+
+### Production
+
+```bash
+# Docker Compose
+docker-compose -f docker-compose.production.yml up -d
+
+# Kubernetes (optional)
+kubectl apply -f k8s/
+```
+
+Подробнее: [Deployment Guide](.kiro/specs/musicverse-pro-complete/DEPLOYMENT_GUIDE.md)
+
+## 🤝 Вклад в проект
+
+Мы приветствуем вклад в проект! Пожалуйста:
+
+1. Fork репозиторий
+2. Создайте feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit изменения (`git commit -m 'Add amazing feature'`)
+4. Push в branch (`git push origin feature/amazing-feature`)
+5. Откройте Pull Request
+
+См. [CONTRIBUTING.md](CONTRIBUTING.md) для деталей.
+
+## 📝 Roadmap
+
+### 🎯 Milestone 1: MVP (Weeks 1-4) 🚧
+- [ ] Basic bot with commands
+- [ ] Simple Mini App
+- [ ] Playlists & Favorites
+- [ ] Supabase integration
+- **Goal:** Launch working version
+
+### 🚀 Milestone 2: Enhanced (Weeks 5-8) 📋
+- [ ] Redis caching
+- [ ] Basic analytics
+- [ ] Menu system
+- [ ] Simple search
+- **Goal:** Better performance
+
+### 💎 Milestone 3: Advanced (Weeks 9-12) 📋
+- [ ] Background jobs
+- [ ] Full-text search
+- [ ] Notifications
+- [ ] Recommendations
+- **Goal:** Scalability
+
+### 🏢 Milestone 4: Enterprise (Weeks 13-16) 📋
+- [ ] Graceful degradation
+- [ ] Comprehensive monitoring
+- [ ] Advanced security
+- **Goal:** Production-ready
+
+**See:** [Phased Development Plan](.kiro/specs/PHASED_DEVELOPMENT_PLAN.md)
 
 ## 📄 Лицензия
 
-Этот проект распространяется под лицензией ISC. См. файл [LICENSE](LICENSE) для подробностей.
+Этот проект лицензирован под MIT License - см. [LICENSE](LICENSE) файл для деталей.
 
-## 💬 Поддержка
+## 👥 Команда
 
-- 📖 [Документация](docs/)
-- 🐛 [Сообщить о проблеме](https://github.com/ivan-meer/musicverse-pro/issues)
-- 💡 [Предложить функцию](https://github.com/ivan-meer/musicverse-pro/issues/new)
-- 📧 Контакт: [@support](https://t.me/support)
+- **Product Owner** - [@your-name](https://github.com/your-name)
+- **Lead Developer** - [@developer](https://github.com/developer)
+- **DevOps** - [@devops](https://github.com/devops)
 
-## 🔗 Полезные ссылки
+## 📞 Поддержка
 
-### Официальная документация
-- [Telegram Bot API](https://core.telegram.org/bots/api) - Документация Bot API
-- [Telegram Mini Apps](https://core.telegram.org/bots/webapps) - Руководство по Mini Apps
-- [BotFather](https://t.me/BotFather) - Создание и настройка ботов
-
-### Музыкальные API
-- [Spotify for Developers](https://developer.spotify.com/) - Spotify API
-- [Deezer Developers](https://developers.deezer.com/) - Deezer API
-- [Apple Music API](https://developer.apple.com/documentation/applemusicapi) - Apple Music
-- [Last.fm API](https://www.last.fm/api) - Last.fm API
-
-### Инструменты разработки
-- [Node.js](https://nodejs.org/) - JavaScript runtime
-- [Express.js](https://expressjs.com/) - Web framework
-- [Docker](https://www.docker.com/) - Контейнеризация
-- [PostgreSQL](https://www.postgresql.org/) - База данных
-- [Redis](https://redis.io/) - Кэширование
-
-### Хостинг платформы
-- [Heroku](https://www.heroku.com/) - Cloud platform
-- [Railway](https://railway.app/) - Deploy platform
-- [Vercel](https://vercel.com/) - Frontend hosting
-- [DigitalOcean](https://www.digitalocean.com/) - VPS hosting
+- 📧 Email: support@musicverse.pro
+- 💬 Telegram: @musicverse_support
+- 🐛 Issues: [GitHub Issues](https://github.com/your-org/musicverse-pro/issues)
+- 📖 Docs: https://docs.musicverse.pro
 
 ## 🙏 Благодарности
 
-- [Telegram Bot API](https://core.telegram.org/bots/api) - За мощный API для ботов
-- [Telegram Mini Apps](https://core.telegram.org/bots/webapps) - За платформу Mini Apps
-- Провайдеры музыкальных API - За доступ к музыкальным данным
-- Open Source сообщество - За вдохновение и поддержку
-
-## 📊 Статистика проекта
-
-```
-📁 Файлов кода: 15+
-📝 Строк кода: 2000+
-📚 Страниц документации: 10+
-🌍 Языков: 2 (Русский, English)
-⭐ Версия: 1.0.0
-```
-
-## 🗺️ Roadmap 2025
-
-- [x] ✅ Базовая функциональность бота
-- [x] ✅ Telegram Mini App
-- [x] ✅ Система безопасности
-- [x] ✅ Docker поддержка
-- [x] ✅ Полная документация
-- [ ] 🔄 WebSocket для real-time
-- [ ] 🔄 Push-уведомления
-- [ ] 🔄 AI-рекомендации
-- [ ] 🔄 Аудио-стриминг
-- [ ] 🔄 Социальные функции
-- [ ] 🔄 Мобильное приложение
+- [Telegram](https://telegram.org) - За отличную платформу
+- [Supabase](https://supabase.com) - За мощный backend
+- [Bull](https://github.com/OptimalBits/bull) - За систему очередей
+- Все контрибьюторы проекта
 
 ---
 
-<div align="center">
+Made with ❤️ by MusicVerse Team
 
-**Сделано с ❤️ для музыкальных энтузиастов**
-
-⭐ Поставьте звезду, если проект вам понравился!
-
-[⬆ Наверх](#-musicverse-pro)
-
-</div>
